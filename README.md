@@ -24,7 +24,7 @@ PyTorch 初学者が **Deep Variational Information Bottleneck（Deep VIB）** �
 | `ex008_mnist_vib_wce.ipynb` / `.md` | 実験008: Deep VIB + クラス間重み付き CCE |
 | `figures/` | 解説 Markdown 用の学習曲線・可視化画像 |
 
-各 `.ipynb` 先頭に **Open in Colab** バッジがある．Colab 上では GPU を有効にして実行する．
+各 `.ipynb` 先頭に **Open in Colab** バッジがある．Colab で開いたら，実行前に **ランタイム → ランタイムのタイプを変更** からハードウェア アクセラレータを **GPU** に設定する．
 
 ## 実験の流れ
 
@@ -99,7 +99,7 @@ datasets/{実験名}/standard/MNIST/   # 初回ダウンロード時
 
 ## 使い方
 
-1. 実験001から順に `.ipynb` を Colab で開く（またはローカル Jupyter で実行）．
+1. 実験001から順に `.ipynb` を Colab で開き，ランタイムを **GPU** に変更する（またはローカル Jupyter で実行）．
 2. 対応する `.md` で目的関数と結果を確認する．
 3. `figures/` の画像は `.md` 内で参照される．
 

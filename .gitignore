@@ -1,4 +1,4 @@
-# GitHub main には REEDME.md, ex*.ipynb, ex*.md, figures/ のみ公開する
+# GitHub には README.md, ex*.ipynb, ex*.md, figures/, report.pdf を公開する
 *
 
 !.gitignore
@@ -7,6 +7,7 @@
 !figures/**
 !ex*.ipynb
 !ex*.md
+!report.pdf
 
 # ローカル開発用（明示的に除外）
 outputs/
