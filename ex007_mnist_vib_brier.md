@@ -58,8 +58,20 @@ $$
 
 結果の保存先は `outputs/ex007_mnist_vib_brier/Adam/0.001_128/0/` である．
 
+### 実験前に考える
+
+ノートブックを実行する前に，次の問いに自分の言葉で答えてください．
+
+1. Accuracy が同じ 2 つのモデルがあった場合，どちらが良いモデルなのでしょうか．
+2. 予測確率 $0.51$ で正解した場合と，$0.99$ で正解した場合，両者は同じ価値でしょうか．
+3. 高い確信度で間違えることには，どのような問題があるでしょうか．
+4. Brier スコアは全クラスの確率誤差を見ます．同じ $\beta$ なら，CCE と Brier のどちらが KL（圧縮）を強く効かせると思いますか．
+
 
 ## 4. 実験結果
+
+<details>
+<summary>実験結果を見る（先に予想してから開く）</summary>
 
 学習は完了した．0 エポック目の検証 Accuracy は $0.1023$ である．10 エポック目に最高値 $0.9696$ を記録した．KL は学習開始直後に上昇したのち $7.6$ 前後へ収束した．
 
@@ -113,11 +125,25 @@ $$
 
 左が CCE，右が Brier である．どちらも原点から放射状にクラスが並ぶ．CCE の $\mu$ はおおよそ $[-15,20]$ まで広がり，Brier は $[-6,6]$ 程度に収まる．決定領域は実験005と同じく，潜在平面の $200\times 200$ 格子を `classify` に通して塗っている．$\mu$ からの検証 Accuracy は CCE $0.9604$，Brier $0.9642$ である．
 
+</details>
+
+### 実験後に考える
+
+1. 32 次元では CCE の方が Accuracy が高く，KL は Brier の方が小さいです．実験前の予想と一致しましたか．
+2. 2 次元では Brier の Accuracy がわずかに上回ります．「Accuracy が高い = 表現が広がっている」は成り立ちますか．
+3. 確信度の校正（calibration）と，IB の圧縮は，どう関係していると考えられますか．
+
 ## 5. 考察
+
+<details>
+<summary>解説を見る</summary>
+
 
 Brier スコアは多クラス分類のキャリブレーション指標として知られ，確率ベクトル全体を教師 one-hot へ近づける．VIB の KL 項と組み合わせると，交差エントロピーより勾配が全クラスに分散しやすく，同じ $\beta$ では潜在表現の圧縮（KL 低減）が強く効く．2 次元可視化でも，Brier のクラスタは原点付近にコンパクトに集まり，CCE はより遠くへ伸びる．
 
 講座の最終実験として，Deep VIB の分類項を Brier スコアとした．実験001（CE），実験004（CE + KL），本実験（Brier + KL）は，いずれも `loss_func` の差し替えだけで完結する．
+
+</details>
 
 ## 6. まとめ
 
@@ -125,3 +151,45 @@ Brier スコアは多クラス分類のキャリブレーション指標とし�
 - 同じ骨格の CCE と比べ，Accuracy は 32 次元で約 $0.9$ ポイント低く，KL は約 $22$ から約 $7.6$ へ小さくなった．
 - 2 次元ではどちらも放射状の配置になるが，Brier の方が原点近くに圧縮される．
 - 結果は `outputs/ex007_mnist_vib_brier/` に保存した．
+
+## 7. 発展課題
+
+### 課題
+
+予測の確信度を測る指標を追加し，CCE と Brier で「自信の大きさ」が違うかを調べてください．
+
+1. **何を変更するか**: `metrics_func` に，正解クラスの平均確率（mean confidence on correct labels）や，予測クラスの平均最大確率を追加してログする．
+2. **何を比較するか**: 検証 Accuracy が近いエポックで，平均最大確率が CCE と Brier でどう違うか．
+3. **予想**: CCE は $-\log p_y$ だけを見るため，正解確率を極端に 1 へ押しやすいです．Brier は他クラスの確率にも罰則があるため，確信度がやや穏やかになる可能性があります．
+
+<details>
+<summary>回答例を見る</summary>
+
+```python
+def metrics_func(outputs, teacher_signals):
+    logits = outputs["logits"]
+    mu = outputs["mu"]
+    logvar = outputs["logvar"]
+    probs = F.softmax(logits, dim=1)
+    pred_labels = logits.argmax(dim=1)
+    acc = (pred_labels == teacher_signals).float().mean().item()
+    kl = kl_divergence(mu, logvar).item()
+    max_conf = probs.max(dim=1).values.mean().item()
+    return {"acc": acc, "kl": kl, "max_conf": max_conf}
+```
+
+`logger.set_names` と `train` 内の `logger(...)` 呼び出しに `max_conf` を追加する必要があります．比較実験セルで `CLASS_LOSS_NAME` を `"ce"` と `"brier"` に切り替えて学習します．
+
+### 実験方法
+
+潜在 32 次元で両者を学習し，検証 Accuracy と `max_conf` の最終値を比べます．
+
+### 期待される結果
+
+Accuracy が近くても，CCE の平均最大確率の方が高くなりやすいです．Brier は確率ベクトル全体を one-hot へ近づけるため，過信が和らぎます．
+
+### 結果から分かること
+
+良いモデルは Accuracy だけでは決まりません．確率の意味を損失がどう規定するかが，校正と圧縮の両方に効きます．
+
+</details>
