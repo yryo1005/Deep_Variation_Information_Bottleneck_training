@@ -8,41 +8,41 @@
 
 ### 2.1 モデル
 
-入力は $28 \times 28$ のグレースケール画像 $x$ である．Encoder は $q(z|x)=\mathcal{N}(\mu, \mathrm{diag}(\sigma^2))$ のパラメータ $\mu$ と $\log\sigma^2$（各 32 次元）を出力する．
+入力は $28 \times 28$ のグレースケール画像 $x$ である．Encoder は $q(z|x)=\mathcal{N}(\mu, \mathrm{diag}(\sigma^{2}))$ のパラメータ $\mu$ と $\log\sigma^{2}$（各 32 次元）を出力する．
 
 Encoder:
 
 $$
-h_1 = \mathrm{ReLU}(W_1^{(e)}\tilde{x} + b_1^{(e)}) \in \mathbb{R}^{256}
+h_{1} = \mathrm{ReLU}(W_{1}^{(e)}\tilde{x} + b_{1}^{(e)}) \in \mathbb{R}^{256}
 $$
 
 $$
-h_2 = \mathrm{ReLU}(W_2^{(e)} h_1 + b_2^{(e)}) \in \mathbb{R}^{128}
+h_{2} = \mathrm{ReLU}(W_{2}^{(e)} h_{1} + b_{2}^{(e)}) \in \mathbb{R}^{128}
 $$
 
 $$
-\mu = W_\mu h_2 + b_\mu \in \mathbb{R}^{32},\quad
-\log\sigma^2 = W_{\log\sigma^2} h_2 + b_{\log\sigma^2} \in \mathbb{R}^{32}
+\mu = W_{\mu} h_{2} + b_{\mu} \in \mathbb{R}^{32},\quad
+\log\sigma^{2} = W_{\log\sigma^{2}} h_{2} + b_{\log\sigma^{2}} \in \mathbb{R}^{32}
 $$
 
 Reparameterization Trick により，
 
 $$
-z = \mu + \epsilon \odot \exp(0.5\log\sigma^2),\quad \epsilon \sim \mathcal{N}(0, I)
+z = \mu + \epsilon \odot \exp(0.5\log\sigma^{2}),\quad \epsilon \sim \mathcal{N}(0, I)
 $$
 
 Decoder は実験002と同型である．
 
 $$
-h_1' = \mathrm{ReLU}(W_1^{(d)} z + b_1^{(d)}) \in \mathbb{R}^{128}
+h_{1}' = \mathrm{ReLU}(W_{1}^{(d)} z + b_{1}^{(d)}) \in \mathbb{R}^{128}
 $$
 
 $$
-h_2' = \mathrm{ReLU}(W_2^{(d)} h_1' + b_2^{(d)}) \in \mathbb{R}^{256}
+h_{2}' = \mathrm{ReLU}(W_{2}^{(d)} h_{1}' + b_{2}^{(d)}) \in \mathbb{R}^{256}
 $$
 
 $$
-\hat{x} = \sigma(W_3^{(d)} h_2' + b_3^{(d)}) \in \mathbb{R}^{784}
+\hat{x} = \sigma(W_{3}^{(d)} h_{2}' + b_{3}^{(d)}) \in \mathbb{R}^{784}
 $$
 
 可視化用の `reconstruct` はサンプリングを行わず，$\mu$ を Decoder へ渡す．
@@ -58,13 +58,13 @@ $$
 再構成誤差は MSE である．
 
 $$
-\mathcal{L}_{\mathrm{recon}} = \frac{1}{ND}\sum_{n=1}^{N}\sum_{i=1}^{D}(\hat{x}_{n,i} - x_{n,i})^2,\quad D=784
+\mathcal{L}_{\mathrm{recon}} = \frac{1}{ND}\sum_{n=1}^{N}\sum_{i=1}^{D}(\hat{x}_{n,i} - x_{n,i})^{2},\quad D=784
 $$
 
 KL 項は $q(z|x)$ と事前分布 $p(z)=\mathcal{N}(0,I)$ の KL ダイバージェンスである．
 
 $$
-\mathcal{L}_{\mathrm{KL}} = -\frac{1}{2N}\sum_{n=1}^{N}\sum_{j=1}^{J}\left(1 + \log\sigma_{n,j}^2 - \mu_{n,j}^2 - \sigma_{n,j}^2\right)
+\mathcal{L}_{\mathrm{KL}} = -\frac{1}{2N}\sum_{n=1}^{N}\sum_{j=1}^{J}\left(1 + \log\sigma_{n,j}^{2} - \mu_{n,j}^{2} - \sigma_{n,j}^{2}\right)
 $$
 
 ここで $J=32$ は潜在次元である．
@@ -79,7 +79,7 @@ $$
 |:---|:---|
 | データセット | MNIST（学習 60,000 枚，テスト 10,000 枚） |
 | 前処理 | `ToTensor()`（画素値を $[0, 1]$ へ変換） |
-| モデル | 全結合 VAE（Encoder 784-256-128-($\mu$,$\log\sigma^2$)，Decoder 32-128-256-784，Sigmoid） |
+| モデル | 全結合 VAE（Encoder 784-256-128-($\mu$, $\log\sigma^{2}$)，Decoder 32-128-256-784，Sigmoid） |
 | 潜在次元 | $32$ |
 | $\beta$ | $0.001$（後続の Deep VIB と同じ） |
 | 最適化手法 | Adam |
@@ -93,11 +93,11 @@ $$
 
 ### 実験前に考える
 
-ノートブックを実行する前に，次の問いに自分の言葉で答えてください．
+ノートブックを実行する前に，次の問いに自分の言葉で答えよ．
 
-1. Autoencoder の $z$ は 1 点でした．これを分布 $q(z|x)$ にすると，再構成は良くなると思いますか，悪くなると思いますか．
-2. KL 項は $q(z|x)$ を $\mathcal{N}(0,I)$ へ近づけます．$\beta$ を大きくすると，再構成と圧縮のどちらが勝つと思いますか．
-3. $\beta=1$ と $\beta=0.001$ では，どちらが数字の形を保ちやすいと思いますか．
+1. Autoencoder の $z$ は 1 点であった．これを分布 $q(z|x)$ にすると，再構成は良くなると考えるか，悪くなると考えるか．
+2. KL 項は $q(z|x)$ を $\mathcal{N}(0,I)$ へ近づける．$\beta$ を大きくすると，再構成と圧縮のどちらが勝つと考えるか．
+3. $\beta=1$ と $\beta=0.001$ では，どちらが数字の形を保ちやすいと考えるか．
 
 
 ## 4. 実験結果
@@ -140,15 +140,14 @@ $$
 
 ### 実験後に考える
 
-1. KL は 0 に潰れましたか，それとも 11 前後に残りましたか．実験前の予想と一致しましたか．
-2. Autoencoder より MAE が大きいのに，再構成の輪郭が滑らかなのはなぜでしょうか．
-3. 「不要な情報を捨てたい」とき，KL は情報量のどの側面を制御していると考えられますか．
+1. KL は 0 に潰れたか，それとも 11 前後に残ったか．実験前の予想と一致したか．
+2. Autoencoder より MAE が大きいのに，再構成の輪郭が滑らかなのはなぜか．
+3. 「不要な情報を捨てたい」とき，KL は情報量のどの側面を制御していると考えられるか．
 
 ## 5. 考察
 
 <details>
 <summary>解説を見る</summary>
-
 
 VAE は Autoencoder に KL 正則化を加えることで，潜在空間を連続的かつ生成可能な分布として学習する．$\beta=1$ だと再構成より圧縮が勝ち，Posterior Collapse（$q(z|x)\approx p(z)$）が起きやすい．本実験では後続の Deep VIB と同じ $\beta=0.001$ を用い，KL を $11$ 前後に保ったまま再構成 MAE $0.0622$ まで学習した．
 
@@ -168,11 +167,11 @@ Deep VIB でも同じ $\beta$ を分類損失と組み合わせる．VAE で確�
 
 ### 課題
 
-$\beta$ を変えて，再構成の綺麗さと KL の大きさのトレードオフを自分で測ってください．
+$\beta$ を変えて，再構成の綺麗さと KL の大きさのトレードオフを自分で測定せよ．
 
 1. **何を変更するか**: `BETA = 0.001` を `1.0` および `0.0001` にする（1 条件ずつ学習する）．
 2. **何を比較するか**: 検証 MAE，検証 KL，再構成画像の判読しやすさ．
-3. **予想**: $\beta=1$ では KL が小さく（場合によってほぼ 0），再構成は潰れる（Posterior Collapse）可能性が高いです．$\beta=0.0001$ では KL が大きく，再構成は Autoencoder に近づきます．
+3. **予想**: $\beta=1$ では KL が小さく（場合によってほぼ 0），再構成は潰れる（Posterior Collapse）可能性が高い．$\beta=0.0001$ では KL が大きく，再構成は Autoencoder に近づく．
 
 <details>
 <summary>回答例を見る</summary>
@@ -181,18 +180,18 @@ $\beta$ を変えて，再構成の綺麗さと KL の大きさのトレード�
 BETA = 1.0  # または 0.0001
 ```
 
-条件ごとに保存先が重ならないよう，学習後に `log.json` を別名でコピーするか，`EXPERIMENT_NAME` を `ex003_mnist_vae_beta1` のように変えて実行してください．
+条件ごとに保存先が重ならないよう，学習後に `log.json` を別名でコピーするか，`EXPERIMENT_NAME` を `ex003_mnist_vae_beta1` のように変えて実行せよ．
 
 ### 実験方法
 
-各 $\beta$ で 10 エポック学習し，最終の `val_mae` と `val_kl`，再構成画像を表にまとめます．
+各 $\beta$ で 10 エポック学習し，最終の `val_mae` と `val_kl`，再構成画像を表にまとめる．
 
 ### 期待される結果
 
-$\beta=1$ では KL が非常に小さく，数字が判別しにくい再構成になりやすいです．$\beta=0.0001$ では KL が大きく，MAE は本実験（$0.0622$）より小さくなります．
+$\beta=1$ では KL が非常に小さく，数字が判別しにくい再構成になりやすい．$\beta=0.0001$ では KL が大きく，MAE は本実験（$0.0622$）より小さくなる．
 
 ### 結果から分かること
 
-KL は「圧縮の強さ」のつまみです．後続の Deep VIB が同じ $\beta=0.001$ を使うのは，識別に必要な情報を残しつつ，入力の余剰を抑えられる地点を VAE で先に確認したためです．
+KL は「圧縮の強さ」のつまみである．後続の Deep VIB が同じ $\beta=0.001$ を使うのは，識別に必要な情報を残しつつ，入力の余剰を抑えられる地点を VAE で先に確認したためである．
 
 </details>

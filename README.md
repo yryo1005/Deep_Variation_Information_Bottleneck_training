@@ -13,7 +13,7 @@ PyTorch 初学者が **Deep Variational Information Bottleneck（Deep VIB）** �
 
 | ファイル | 内容 |
 |:---|:---|
-| `REEDME.md` | 本ドキュメント（リポジトリ全体の説明） |
+| `README.md` | 本ドキュメント（リポジトリ全体の説明） |
 | `ex001_mnist_nn.ipynb` | 実験001: 全結合 NN + 交差エントロピー |
 | `ex001_mnist_nn.md` | 実験001の解説（目的，問い，結果，発展課題） |
 | `ex002_mnist_ae.ipynb` / `.md` | 実験002: Autoencoder |
@@ -31,13 +31,13 @@ PyTorch 初学者が **Deep Variational Information Bottleneck（Deep VIB）** �
 
 | # | 実験 | モデル | 主な損失 | 前実験との主な差分 |
 |:---:|:---|:---|:---|:---|
-| 001 | MNIST 分類 | 全結合 NN | 交差エントロピー | 講座の基礎。学習ループの型を固定 |
+| 001 | MNIST 分類 | 全結合 NN | 交差エントロピー | 講座の基礎．学習ループの型を固定 |
 | 002 | 再構成 | Autoencoder | MSE | 教師信号が入力画像自身 |
 | 003 | 再構成 | VAE | MSE + KL | 潜在変数が確率分布 |
 | 004 | 分類 | Deep VIB | CE + β KL | VAE 型 Encoder + 分類器 |
 | 005 | 可視化 | Deep VIB（潜在 2 次元） | CE + β KL | 潜在平面の散布図・決定領域 |
 | 006 | 敵対的学習 | 全結合 NN | CE | 入力ノイズを PGD で最適化 |
-| 007 | 分類 | Deep VIB | Brier + β KL | 分類項を CE から Brier へ。CCE との学習曲線・2 次元分布を比較 |
+| 007 | 分類 | Deep VIB | Brier + β KL | 分類項を CE から Brier へ．CCE との学習曲線・2 次元分布を比較 |
 | 008 | 分類 | Deep VIB | 重み付き CCE + β KL | 似たクラスの混同をクラス間重み（50 個）で強く罰する |
 
 ## 共通ハイパーパラメータ（001〜008）
@@ -51,7 +51,7 @@ PyTorch 初学者が **Deep Variational Information Bottleneck（Deep VIB）** �
 | エポック | 10（0 エポック目は初期評価） |
 | シード | 0 |
 
-Deep VIB 系（004, 005, 007, 008）と VAE（003）では $\beta = 0.001$ を共通に用いる．VAE で $\beta=1$ とすると Posterior Collapse しやすいためである．実験006の敵対的学習では $L_\infty$ 半径 $\epsilon=0.1$，PGD 5 ステップ，$\alpha=0.025$ とする．
+Deep VIB 系（004, 005, 007, 008）と VAE（003）では $\beta = 0.001$ を共通に用いる．VAE で $\beta=1$ とすると Posterior Collapse しやすいためである．実験006の敵対的学習では $L_{\infty}$ 半径 $\epsilon=0.1$，PGD 5 ステップ，$\alpha=0.025$ とする．
 
 ## 関数とクラスの役割
 
