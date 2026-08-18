@@ -1,0 +1,21 @@
+# GitHub main には REEDME.md, ex*.ipynb, ex*.md, figures/ のみ公開する
+*
+
+!.gitignore
+!REEDME.md
+!figures/
+!figures/**
+!ex*.ipynb
+!ex*.md
+
+# ローカル開発用（明示的に除外）
+outputs/
+datasets/
+.env_*/
+.agent_env/
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+tokens.json
+*.pth

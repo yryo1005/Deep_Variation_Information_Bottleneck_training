@@ -1,0 +1,6 @@
+[submodule "cursor_template"]
+	path = cursor_template
+	url = https://github.com/yryo1005/cursor_template.git
+[submodule "cursor_experiment_agent"]
+	path = cursor_experiment_agent
+	url = https://github.com/yryo1005/cursor_experiment_agent.git
