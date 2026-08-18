@@ -2,7 +2,7 @@
 *
 
 !.gitignore
-!REEDME.md
+!README.md
 !figures/
 !figures/**
 !ex*.ipynb
